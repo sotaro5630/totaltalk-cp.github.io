@@ -1,104 +1,37 @@
-/* 全体の基本設定 */
 body {
-  font-family: system-ui, sans-serif;
-  background: #f5f5f5;
-  margin: 0;
-  padding: 0;
-}
-
-/* ヘッダー */
-header {
-  background: #333;
-  color: #fff;
-  padding: 16px;
-  text-align: center;
-}
-
-/* メインコンテンツ */
-main {
-  max-width: 640px;
-  margin: 24px auto;
-  background: #fff;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  border-radius: 8px;
-}
-
-h1 {
-  margin: 0 0 8px;
-  font-size: 1.6rem;
-}
-
-p.lead {
-  margin-top: 0;
-  color: #666;
-  font-size: 0.95rem;
-}
-
-/* フォーム全体 */
-.form-group {
-  margin-bottom: 16px;
+    font-family: sans-serif;
+    margin: 30px;
 }
 
 label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 4px;
+    display: inline-block;
+    width: 80px;
 }
 
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 8px 10px;
-  font-size: 0.95rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+input {
+    margin-bottom: 10px;
 }
 
-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-/* 日付と時間の横並び */
-.inline-group {
-  display: flex;
-  gap: 12px;
-}
-
-.inline-group .form-group {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-/* 注意書き */
-.note {
-  font-size: 0.8rem;
-  color: #888;
-}
-
-/* 送信ボタン */
 button {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 4px;
-  background: #0078d4;
-  color: #fff;
-  cursor: pointer;
+    margin-top: 10px;
+    padding: 5px 10px;
 }
 
-button:hover {
-  background: #005fa3;
+.hidden {
+    display: none;
 }
 
-/* フッター */
-footer {
-  text-align: center;
-  font-size: 0.8rem;
-  color: #777;
-  margin-bottom: 16px;
+table {
+    border-collapse: collapse;
+    width: 60%;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #333;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
 }
