@@ -1,58 +1,83 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("form");
+// ツアー枠生成（9:00〜20分刻み）
+const tourSlots = [];
+let startHour = 9;
+let startMin = 0;
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault(); // 本番では削除してOK（サーバー送信のため）
+for (let i = 0; i < 24; i++) {
+    let h = String(startHour).padStart(2, "0");
+    let m = String(startMin).padStart(2, "0");
+    tourSlots.push({ time: `${h}:${m}`, capacity: 15 });
+    startMin += 20;
+    if (startMin >= 60) {
+        startMin = 0;
+        startHour++;
+    }
+}
 
-    // 入力値の取得
-    const name = document.getElementById("name").value.trim();
-    const tel = document.getElementById("tel").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const date = document.getElementById("date").value;
-    const time = document.getElementById("time").value;
-    const people = document.getElementById("people").value;
+// 予約データ
+let reservations = [];
 
-    // 必須チェック
-    if (!name || !tel || !email || !date || !time || !people) {
-      alert("必須項目が入力されていません。すべての項目を入力してください。");
-      return;
+function submitReservation() {
+    const name = document.getElementById("name").value;
+    const people = Number(document.getElementById("people").value);
+
+    if (!name || !people) {
+        alert("名前と人数を入力してください");
+        return;
     }
 
-    // メール形式チェック（簡易）
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      alert("メールアドレスの形式が正しくありません。");
-      return;
+    // 空き枠を探す
+    let assignedSlot = null;
+
+    for (let slot of tourSlots) {
+        if (slot.capacity >= people) {
+            assignedSlot = slot;
+            slot.capacity -= people;
+            break;
+        }
     }
 
-    // 電話番号チェック（数字とハイフンのみ）
-    const telPattern = /^[0-9\-]+$/;
-    if (!telPattern.test(tel)) {
-      alert("電話番号は数字とハイフンのみで入力してください。");
-      return;
+    if (!assignedSlot) {
+        alert("全てのツアーが満員です");
+        return;
     }
 
-    // 送信前の確認
-    const confirmMessage = `
-以下の内容で予約しますか？
+    // 予約データ保存
+    reservations.push({
+        name: name,
+        people: people,
+        time: assignedSlot.time
+    });
 
-【お名前】${name}
-【電話番号】${tel}
-【メール】${email}
-【予約日】${date}
-【時間】${time}
-【人数】${people}名
+    // 結果表示
+    const result = document.getElementById("result");
+    result.innerHTML = `
+        <h3>予約完了</h3>
+        <p>${name} さんの予約は <strong>${assignedSlot.time}</strong> のツアーです。</p>
     `;
+    result.classList.remove("hidden");
+}
 
-    if (!confirm(confirmMessage)) {
-      return;
+function adminLogin() {
+    const pass = document.getElementById("admin-pass").value;
+
+    if (pass !== "ABC") {
+        alert("パスワードが違います");
+        return;
     }
 
-    // 本番ではここでサーバーへ送信する
-    // fetch("/reserve", { method: "POST", body: new FormData(form) })
+    document.getElementById("admin-page").classList.remove("hidden");
 
-    alert("予約を受け付けました！店舗からの確認連絡をお待ちください。");
+    const table = document.getElementById("reservation-table");
+    table.innerHTML = "";
 
-    form.reset(); // フォームをリセット
-  });
-});
+    reservations.forEach(r => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${r.name}</td>
+            <td>${r.people}</td>
+            <td>${r.time}</td>
+        `;
+        table.appendChild(row);
+    });
+}
