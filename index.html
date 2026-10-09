@@ -1,172 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>タートルトーク予約ページ</title>
-
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #333;
-      color: #fff;
-      padding: 16px;
-      text-align: center;
-    }
-    main {
-      max-width: 640px;
-      margin: 24px auto;
-      background: #fff;
-      padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      border-radius: 8px;
-    }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 1.6rem;
-    }
-    p.lead {
-      margin-top: 0;
-      color: #666;
-      font-size: 0.95rem;
-    }
-    .form-group {
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      font-size: 0.9rem;
-      margin-bottom: 4px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 0.95rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    .inline-group {
-      display: flex;
-      gap: 12px;
-    }
-    .inline-group .form-group {
-      flex: 1;
-      margin-bottom: 0;
-    }
-    .note {
-      font-size: 0.8rem;
-      color: #888;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 4px;
-      background: #0078d4;
-      color: #fff;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #005fa3;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #777;
-      margin-bottom: 16px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>ツアー予約サイト</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h1> 2Eクラス展示予約ページです。</h1>
-</header>
+<h1>ツアー予約フォーム</h1>
 
-<main>
-  <p class="lead">ご来店予約フォームです。必要事項をご入力のうえ、送信してください。</p>
+<div id="user-form">
+    <label>名前：</label>
+    <input type="text" id="name"><br>
 
-  <!-- 実際の運用では action にサーバー側のURLを設定してください -->
-  <form action="/reserve" method="post">
-    <div class="form-group">
-      <label for="name">お名前</label>
-      <input type="text" id="name" name="name" required placeholder="豊田　亀子">
-    </div>
+    <label>人数：</label>
+    <input type="number" id="people" min="1" max="15"><br>
 
-    <div class="form-group">
-      <label for="tel">電話番号</label>
-      <input type="tel" id="tel" name="tel" required placeholder="090-1234-5678">
-    </div>
+    <button onclick="submitReservation()">予約する</button>
+</div>
 
-    <div class="form-group">
-      <label for="email">メールアドレス（確認用）</label>
-      <input type="email" id="email" name="email" required placeholder="example@example.com">
-    </div>
+<div id="result" class="hidden"></div>
 
-    <div class="inline-group">
-      <div class="form-group">
-        <label for="date">予約希望日</label>
-        <input type="date" id="date" name="date" required>
-      </div>
-      <div class="form-group">
-        <label for="time">予約希望時間</label>
-        <input type="time" id="time" name="time" required>
-      </div>
-    </div>
+<hr>
 
-    <div class="form-group">
-      <label for="people">人数</label>
-      <select id="people" name="people" required>
-        <option value="">選択してください</option>
-        <option value="1">1名</option>
-        <option value="2">2名</option>
-        <option value="3">3名</option>
-        <option value="4">4名</option>
-        <option value="5">5名</option>
-        <option value="6">6名以上</option>
-      </select>
-    </div>
+<h2>管理者ログイン</h2>
+<input type="password" id="admin-pass" placeholder="パスワードを入力">
+<button onclick="adminLogin()">ログイン</button>
 
-    <div class="form-group">
-      <label for="course">ご希望のコース</label>
-      <select id="course" name="course">
-        <option value="">未定</option>
-        <option value="lunch">ランチコース</option>
-        <option value="dinner">ディナーコース</option>
-        <option value="a_la_carte">アラカルト</option>
-      </select>
-    </div>
+<div id="admin-page" class="hidden">
+    <h2>予約一覧</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>名前</th>
+                <th>人数</th>
+                <th>ツアー時間</th>
+            </tr>
+        </thead>
+        <tbody id="reservation-table"></tbody>
+    </table>
+</div>
 
-    <div class="form-group">
-      <label for="request">ご要望・アレルギーなど</label>
-      <textarea id="request" name="request" placeholder="例：記念日利用、アレルギー食材、席の希望など"></textarea>
-    </div>
-
-    <p class="note">
-      ※送信後、店舗からの確認連絡をもって予約確定となります。<br>
-      ※当日のご予約はお電話にてお問い合わせください。
-    </p>
-
-    <button type="submit">この内容で予約する</button>
-  </form>
-</main>
-
-<footer>
-  &copy; 2026 〇〇店
-</footer>
-
+<script src="script.js"></script>
 </body>
 </html>
